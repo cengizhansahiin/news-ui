@@ -1,0 +1,210 @@
+<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+    <!-- Indicators -->
+    <ol class="carousel-indicators">
+        <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+        <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+        <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+    </ol> <!-- Wrapper for slides -->
+    <div class="carousel-inner" role="listbox">
+        <div class="item active">
+            <div class="banner" style="background-image: url(./assets/main_bg.jpg)"></div>
+            <div class="carousel-caption">
+                <h2 class="animated bounceInRight" style="animation-delay: 1s">Global <span>News</span></h2>
+                <h3 class="animated bounceInLeft" style="animation-delay: 2s">Breaking News From All Around The Globe</h3>
+                <p class="animated bounceInRight" style="animation-delay: 3s"><a href="javascript:void(0)" (click)="scrollToElement(news)">SEE NEWS</a></p>
+            </div>
+        </div>
+    </div>
+<div #news id="main-container" class="container">
+  <br>
+  <hr>
+  <div class="SearchBar">                    
+    <input type="search" (ngModelChange)="searchArticles(key.value)" #key="ngModel" ngModel name="key" id="searchArticle" class="form-control" placeholder="Search Article">
+</div>
+  <button (click)="onOpenModal(null,'deleteAll')" type="button" class="btn btn-danger" style="float: right;"><i-feather name="trash-2"></i-feather></button>
+  <p style="float: right;">&nbsp;</p>
+  <button (click)="onOpenModal(null,'add')"type="button" class="btn btn-primary" style="float: right;"><i-feather name="plus"></i-feather></button>
+  <br><br>
+  <div *ngIf="articles.length === 0" class="alert alert-warning" role="alert">
+    There is no article in the database
+  </div>
+  <div class="row">
+      <div *ngFor="let article of articles" class="col-lg-4">
+          <div class="card card-margin">
+              <div class="card-header no-border">
+                  <h5 class="card-title">ID: {{article.id}}</h5>
+              </div>
+              <div class="card-body pt-0">
+                  <div class="widget-49">
+                      <div class="widget-49-title-wrapper">
+                          <div class="widget-49-date-primary">
+                              <span class="widget-49-date-day">{{article.publishedAt.split("-")[2].split("T")[0]}}</span>
+                              <span class="widget-49-date-month">{{article.publishedAt.split("-")[1]}}</span>
+                          </div>
+                          <div class="widget-49-meeting-info">
+                              <span class="widget-49-pro-title"><b>Title: </b>{{article.title.substring(1,article.title.length-1)}}</span>
+                              <span class="widget-49-meeting-time"><b>Author: </b>{{article.author.substring(1,article.author.length-1)}}</span>
+                          </div>
+                      </div>
+                      <div class="widget-49-meeting-action">
+                          <a (click)="onOpenModal(article,'view')" href="javascript:void(0)" class="btn btn-sm btn-flash-border-primary">View All</a>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+<div class="modal fade" id="viewArticleModal" tabindex="-1" role="dialog" aria-labelledby="viewModelLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModelLabel">View Full Article</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div *ngIf="viewArticle" class="modal-body">
+                <p> <b>Title: </b>{{viewArticle.title.substring(1,viewArticle.title.length-1)}}</p><br>
+                <p> <b>Author: </b>{{viewArticle.author.substring(1,viewArticle.author.length-1)}}</p><br>
+                <p> <b>Description: </b>{{viewArticle.description.substring(1,viewArticle.description.length-1)}}</p><br>
+                <p><b>Url: </b><a href = "{{viewArticle.url.substring(1,viewArticle.url.length-1)}}">{{viewArticle.url.substring(1,viewArticle.url.length-1)}}</a></p><br>
+                <p> <b>Published At: </b>{{viewArticle.publishedAt.substring(1,viewArticle.publishedAt.length-2).split("T")[0]}} {{viewArticle.publishedAt.substring(1,viewArticle.publishedAt.length-2).split("T")[1]}}</p><br>
+            </div>
+            <div class="modal-footer">
+                <button (click)="onOpenModal(viewArticle,'edit')" type="button" class="btn btn-light" data-bs-dismiss="modal"><i-feather name="edit"></i-feather></button>
+                <button (click)="onOpenModal(viewArticle,'delete')" type="button" class="btn btn-danger" data-bs-dismiss="modal"><i-feather name="trash-2"></i-feather></button>
+              </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="updateArticleModal" tabindex="-1" role="dialog" aria-labelledby="articleEditModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div *ngIf="editArticle" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateArticleModalLabel">Edit Article {{editArticle.id}}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form #editForm="ngForm">
+                <div class="form-group">
+                    <label for="name">Title</label>
+                    <input type="text" ngModel="{{editArticle.title}}" name="title" class="form-control" id="title" aria-describedby="emailHelp" placeholder="Title">
+                </div>
+                <input type="hidden" ngModel="{{editArticle.id}}" name="id" class="form-control" id="id" placeholder="id">
+                <input type="hidden" ngModel="{{editArticle.create_date}}" name="create_date" class="form-control" id="create_date" placeholder="create_date">
+                <input type="hidden" ngModel="{{editArticle.update_date}}" name="update_date" class="form-control" id="update_date" placeholder="update_date">
+                <div class="form-group">
+                    <label for="author">Author</label>
+                    <input type="email" ngModel="{{editArticle.author}}" name="author" class="form-control" id="author" placeholder="Author">
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <input type="text" ngModel="{{editArticle.description}}" name="description" class="form-control" id="description" placeholder="Description">
+                </div>
+                <div class="form-group">
+                    <label for="url">URL</label>
+                    <input type="text" ngModel="{{editArticle.url}}" name="url" class="form-control" id="url" placeholder="URL">
+                </div>
+                <div class="form-group">
+                    <label for="imageUrl">Image URL</label>
+                    <input type="text" ngModel="{{editArticle.urlToImage}}" name="urlToImage" class="form-control" id="urlToImage" placeholder="Image URL">
+                </div>
+                <div class="form-group">
+                    <label for="publishedAt">Published At</label>
+                    <input type="text" ngModel="{{editArticle.publishedAt}}" name="publishedAt" class="form-control" id="publishedAt" placeholder="Date">
+                </div>
+                <div class="form-group">
+                    <label for="content">Content</label>
+                    <input type="text" ngModel="{{editArticle.content}}" name="content" class="form-control" id="content" placeholder="Content">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="" data-bs-dismiss="modal" class="btn btn-secondary">Close</button>
+                    <button (click)="onUpdateArticle(editForm.value)" data-bs-dismiss="modal" class="btn btn-primary" >Save changes</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="addArticleModal" tabindex="-1" role="dialog" aria-labelledby="addArticleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title" id="addEmployeeModalLabel">Add Employee</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+         </div>
+         <div class="modal-body">
+            <form #addForm="ngForm" (ngSubmit)="onAddArticle(addForm)">
+            <div class="form-group">
+               <label for="title">Title</label>
+               <input type="text" ngModel name="title" class="form-control" id="title" placeholder="Title" required>
+            </div>
+            <div class="form-group">
+               <label for="author">Author</label>
+               <input type="author" ngModel name="author" class="form-control" id="author" placeholder="Author" required>
+            </div>
+            <div class="form-group">
+               <label for="description">Description</label>
+               <input type="text" ngModel name="description" class="form-control" id="description" placeholder="Description" required>
+            </div>
+            <div class="form-group">
+               <label for="url">Url</label>
+               <input type="text" ngModel name="url" class="form-control" id="url" placeholder="Url" required>
+            </div>
+            <div class="form-group">
+               <label for="urlToImage">Image URL</label>
+               <input type="text" ngModel name="urlToImage" class="form-control" id="urlToImage" placeholder="Image URL" required>
+            </div>
+            <div class="form-group">
+                <label for="publishedAt">Published At</label>
+                <input type="text" ngModel name="publishedAt" class="form-control" id="publishedAt" placeholder="Published At" required>
+             </div>
+             <div class="form-group">
+                <label for="content">Content</label>
+                <input type="text" ngModel name="content" class="form-control" id="content" placeholder="Content" required>
+             </div>
+            <div class="modal-footer">
+               <button type="button" id="add-article-form" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+               <button [disabled]="addForm.invalid" type="submit" class="btn btn-primary" >Save changes</button>
+            </div>
+            </form>
+         </div>
+      </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteArticleModal" tabindex="-1" role="dialog" aria-labelledby="deleteModelLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModelLabel">Delete Article</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div *ngIf="deleteArticle" class="modal-body">
+                <p>Are you sure you want to delete article {{deleteArticle.id}}?</p>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                <button (click)="onDeleteArticle(deleteArticle.id)" class="btn btn-danger" data-bs-dismiss="modal">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="deleteAllArticlesModal" tabindex="-1" role="dialog" aria-labelledby="deleteModelLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModelLabel">Delete All Articles</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete article all the articles.</p>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                <button (click)="onDeleteAllArticles()" class="btn btn-danger" data-bs-dismiss="modal">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
