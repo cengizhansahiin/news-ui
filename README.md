@@ -1,6 +1,7 @@
 # NewsUi
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.1.2.
+This repository is the front-end of the project News.
 
 ## Development server
 
